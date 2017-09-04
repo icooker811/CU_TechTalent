@@ -1,10 +1,8 @@
 '''
-Exercise2.2: implement eliminate()
-
-Now, let's finish the code for the function eliminate(), which will take as input a puzzle in dictionary form. 
-The function will iterate over all the boxes in the puzzle that only have one value assigned to them, 
-and it will remove this value from every one of its peers.
-
+Exercise3.1: implement only_choice()
+Time to code it! In the next quiz, finish the code for the function only_choice, 
+which will take as input a puzzle in dictionary form. The function will go through all the units, 
+and if there is a unit with a digit that only fits in one possible box, it will assign that digit to that box.
 '''
 #1. utils.py ----------------------------
 #1.1 define rows: 
@@ -92,13 +90,46 @@ def eliminate(values):
             values[s] = NUMBER
 
 
+#2. function.py ----------------------------
+# 2.1 implement only_choice(values)
+# from utils import *
+def only_choice(values):
+    """Finalize all values that are the only choice for a unit.
+
+    Go through all the units, and whenever there is a unit with a value
+    that only fits in one box, assign the value to this box.
+
+    Input: Sudoku in dictionary form.
+    Output: Resulting Sudoku in dictionary form after filling in only choices.
+    """
+
+    new_values = values
+    for unit in square_units:
+        keys = {}
+        for s in unit:
+            if len(values[s]) > 1: 
+                keys[s] = values[s]
+        for key, value in keys.iteritems():
+            for k, v in keys.iteritems():
+                if k == key: 
+                    continue
+                for t in v:
+                    value = value.replace(t, '')
+            if len(value) == 1:
+                new_values[key] = value
+    return new_values
+
 #3. Test utils.py ----------------------------  
 values = grid_values('..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..')
 print("The original Sudoku board is **********************************************")
 display(values)
-
-#4. Test function.py ----------------------------  
 eliminate(values)
 print("\n")
 print("After implement eliminate(values) method **********************************")
 display(values)
+
+#4. Test function.py ----------------------------  
+new_values = only_choice(values)
+print("\n")
+print("After implement only_choice(values) method **********************************")
+display(new_values)
