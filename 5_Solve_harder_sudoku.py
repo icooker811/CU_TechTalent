@@ -1,15 +1,6 @@
 '''
-Exercise4.1: Apply Constraint Propagation to Sudoku problem
-Now that you see how we apply Constraint Propagation to this problem, let's try to code it! 
-In the following quiz, combine the functions eliminate and only_choice to write the function reduce_puzzle, 
-which receives as input an unsolved puzzle and applies our two constraints repeatedly in an attempt to solve it.
-
-Some things to watch out for:
-- The function needs to stop if the puzzle gets solved. How to do this?
-- What if the function doesn't solve the sudoku? Can we make sure the function quits when applying 
-the two strategies stops making progress?
+Exercise5.1: Try to solve harder sudoku using the same constraint propagation
 '''
-
 #1. utils.py ----------------------------
 #1.1 define rows: 
 rows = 'ABCDEFGHI'
@@ -149,11 +140,13 @@ def reduce_puzzle(values):
         checked = [len(v) for k, v in new_values.iteritems() if len(v) > 1]
         if len(checked) == 0 or order_new_values == new_values:
             break
-
+            
     return new_values
 
 #3. Test utils.py ----------------------------  
-values = grid_values('..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..')
+grid_easy = '..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..'
+grid_hard = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+values = grid_values(grid_hard)
 print("The original Sudoku board is **********************************************")
 display(values)
 
