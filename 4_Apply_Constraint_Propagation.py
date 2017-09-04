@@ -1,9 +1,15 @@
 '''
-Exercise3.1: implement only_choice()
-Time to code it! In the next quiz, finish the code for the function only_choice, 
-which will take as input a puzzle in dictionary form. The function will go through all the units, 
-and if there is a unit with a digit that only fits in one possible box, it will assign that digit to that box.
+Exercise4.1: Apply Constraint Propagation to Sudoku problem
+Now that you see how we apply Constraint Propagation to this problem, let's try to code it! 
+In the following quiz, combine the functions eliminate and only_choice to write the function reduce_puzzle, 
+which receives as input an unsolved puzzle and applies our two constraints repeatedly in an attempt to solve it.
+
+Some things to watch out for:
+- The function needs to stop if the puzzle gets solved. How to do this?
+- What if the function doesn't solve the sudoku? Can we make sure the function quits when applying 
+the two strategies stops making progress?
 '''
+
 #1. utils.py ----------------------------
 #1.1 define rows: 
 rows = 'ABCDEFGHI'
@@ -80,14 +86,16 @@ def eliminate(values):
     Returns:
         Resulting Sudoku in dictionary form after eliminating values.
     """
+    new_values = values
     for s in boxes:
-        if values[s] == '.':
+        if new_values[s] == '.' or len(new_values[s]) != 1:
             NUMBER = '123456789'
             r, c = s[0], s[1]
             for unit in units[s]:
                 for p in unit:
-                    if len(values[p]) == 1: NUMBER = NUMBER.replace(values[p], '')
-            values[s] = NUMBER
+                    if len(new_values[p]) == 1: NUMBER = NUMBER.replace(new_values[p], '')
+            new_values[s] = NUMBER
+    return values
 
 
 #2. function.py ----------------------------
@@ -118,17 +126,37 @@ def only_choice(values):
                 new_values[key] = value
     return new_values
 
+
+#2. function.py ----------------------------
+# 2.1 combine the functions eliminate and only_choice to write the function reduce_puzzle
+# from utils import *
+def reduce_puzzle(values):
+    """
+    Iterate eliminate() and only_choice(). If at some point, there is a box with no available values, return False.
+    If the sudoku is solved, return the sudoku.
+    If after an iteration of both functions, the sudoku remains the same, return the sudoku.
+    Input: A sudoku in dictionary form.
+    Output: The resulting sudoku in dictionary form.
+    """
+    new_values = values
+    
+    while True:
+        new_values = eliminate(new_values)
+        new_values = only_choice(new_values)
+        
+        checked = [len(v) for k, v in new_values.iteritems() if len(v) > 1]
+        if len(checked) == 0:
+            break
+
+    return new_values
+
 #3. Test utils.py ----------------------------  
 values = grid_values('..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..')
 print("The original Sudoku board is **********************************************")
 display(values)
-eliminate(values)
-print("\n")
-print("After implement eliminate(values) method **********************************")
-display(values)
 
 #4. Test function.py ----------------------------  
-new_values = only_choice(values)
+new_values = reduce_puzzle(values)
 print("\n")
-print("After implement only_choice(values) method **********************************")
+print("After applying constrint propagaton (both eliminate and only_choice strategies)*****************")
 display(new_values)
