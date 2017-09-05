@@ -155,7 +155,67 @@ def search(values):
     # Search and Choose one of the unfilled squares with the fewest possibilities
     # Now use recursion to solve each one of the resulting sudokus, 
     # and if one returns a value (not False), return that answer!
+    # find first probability to search
+
+    def check_right_answer(start, values):
+        checked = True
+        s = start
+        if len(values[s]) == 1:
+            value = values[s]
+            r, c = s[0], s[1]
+            for unit in units[s]:
+                for p in unit:
+                    if s == p: continue
+                    if values[p] == value:
+                        checked = False
+                        break
+                if not checked: break
+        return checked
+
+    import copy
     new_values = reduce_puzzle(values)
+    
+    trees = [new_values]
+
+    while True:
+        new_values = trees[0]
+        
+        check_answer = [len(v) for k, v in new_values.iteritems() if len(v) != 1]
+        if len(check_answer) == 0:
+            break
+
+        checked = []
+
+        for i in range(2, 10):
+            checked = [k for k, v in new_values.iteritems() if len(v) == i]
+            if len(checked) > 0:
+                break
+
+        if checked: 
+            start = checked[0]
+            tree = []
+            for j in range(i):
+                tree_new_values = copy.copy(new_values)
+                tree_new_values[start] = new_values[start][j]
+                tree_new_values = reduce_puzzle(tree_new_values)
+                answer = check_right_answer(start, tree_new_values)
+                if not answer:
+                    continue
+
+                tree.append(tree_new_values)
+
+            trees.remove(new_values)
+            if len(tree):
+                count = 0
+                for values in tree:
+                    trees.insert(count, values)
+                    count += 1
+        else:
+            trees.remove(new_values)
+
+        if len(trees) == 0:
+            break
+
     return new_values
 
 #3. Test utils.py ----------------------------  
